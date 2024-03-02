@@ -56,7 +56,8 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
-          run: cue vet  use-cases/k8s/vet/nginx.yaml use-cases/k8s/vet/schema.cue
+          working-directory: use-cases/k8s/vet/
+          run: cue vet nginx.yaml schema.cue
     cue_vet_fail_int:
       runs-on: ubuntu-latest
       continue-on-error: true
@@ -71,7 +72,8 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
-          run: cue vet  use-cases/k8s/vet/nginx-fail-int.yaml use-cases/k8s/vet/schema.cue
+          working-directory: use-cases/k8s/vet/
+          run: cue vet nginx-fail-int.yaml schema.cue
     cue_vet_fail_typo:
       runs-on: ubuntu-latest
       continue-on-error: true
@@ -86,7 +88,8 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
-          run: cue vet  use-cases/k8s/vet/nginx-fail-int.yaml use-cases/k8s/vet/schema.cue
+          working-directory: use-cases/k8s/vet/
+          run: cue vet nginx-fail-typo.yaml schema.cue
 "on":
   - push
 name: Main Workflow
