@@ -42,6 +42,51 @@ jobs:
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
           run: cue eval use-cases/k8s/eval/schema.fail.cue
+    cue_vet_ok:
+      runs-on: ubuntu-latest
+      continue-on-error: true
+      defaults:
+        run:
+          shell: bash
+      steps:
+        - name: Install CUE
+          uses: cue-lang/setup-cue@v1.0.0-alpha.2
+          with:
+            version: v0.4.1-beta.6
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Generate K8S YAML from CUE
+          run: cue vet  use-cases/k8s/vet/nginx.yaml use-cases/k8s/vet/schema.cue
+    cue_vet_fail_int:
+      runs-on: ubuntu-latest
+      continue-on-error: true
+      defaults:
+        run:
+          shell: bash
+      steps:
+        - name: Install CUE
+          uses: cue-lang/setup-cue@v1.0.0-alpha.2
+          with:
+            version: v0.4.1-beta.6
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Generate K8S YAML from CUE
+          run: cue vet  use-cases/k8s/vet/nginx-fail-int.yaml use-cases/k8s/vet/schema.cue
+    cue_vet_fail_typo:
+      runs-on: ubuntu-latest
+      continue-on-error: true
+      defaults:
+        run:
+          shell: bash
+      steps:
+        - name: Install CUE
+          uses: cue-lang/setup-cue@v1.0.0-alpha.2
+          with:
+            version: v0.4.1-beta.6
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Generate K8S YAML from CUE
+          run: cue vet  use-cases/k8s/vet/nginx-fail-int.yaml use-cases/k8s/vet/schema.cue
 "on":
   - push
 name: Main Workflow
