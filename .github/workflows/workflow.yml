@@ -1,5 +1,5 @@
 jobs:
-    cue_export:
+    cue_export_dev:
       runs-on: ubuntu-latest
       defaults:
         run:
@@ -12,7 +12,39 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
-          run: cue export use-cases/k8s/export/nginx.cue --out yaml
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_dev -e service_dev nginx.cue --out yaml
+    cue_export_tst:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+      steps:
+        - name: Install CUE
+          uses: cue-lang/setup-cue@v1.0.0-alpha.2
+          with:
+            version: v0.4.1-beta.6
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Generate K8S YAML from CUE
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_tst -e service_tst nginx.cue --out yaml
+    cue_export_prd:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+      steps:
+        - name: Install CUE
+          uses: cue-lang/setup-cue@v1.0.0-alpha.2
+          with:
+            version: v0.4.1-beta.6
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Generate K8S YAML from CUE
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_prd -e service_prd nginx.cue --out yaml
+           
     cue_eval_ok:
       runs-on: ubuntu-latest
       defaults:
@@ -90,6 +122,35 @@ jobs:
         - name: Generate K8S YAML from CUE
           working-directory: use-cases/k8s/vet/
           run: cue vet nginx-fail-typo.yaml schema.cue -d "#Schema"
+
+    create-cluster:
+      runs-on: ubuntu-latest
+      needs: [cue_export_dev, cue_export_tst, cue_export_prd]
+
+      steps:
+        - name: Install CUE
+          uses: cue-lang/setup-cue@v1.0.0-alpha.2
+          with:
+            version: v0.4.1-beta.6
+        - name: Create k8s Kind Cluster
+          uses: helm/kind-action@v1
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Create namespaces
+          run: kubectl create ns dev; kubectl create ns tst; kubectl create ns prd
+        - name: Apply dev
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_dev -e service_dev nginx.cue --out yaml | kubectl apply -f -
+        - name: Apply tst
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_tst -e service_tst nginx.cue --out yaml | kubectl apply -f -
+        - name: Apply prd
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_prd -e service_prd nginx.cue --out yaml | kubectl apply -f -
+        - name: List services
+          run: kubectl get services -A
+        - name: List Deployments
+          run: kubectl get deploy -A
 "on":
   - push
 name: Main Workflow
