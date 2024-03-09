@@ -144,7 +144,7 @@ jobs:
           run: cue export -e deployment_tst -e service_tst nginx.cue --out yaml | kubectl apply -f -
         - name: Apply prd
           working-directory: use-cases/k8s/export/
-         run: cue export -e deployment_prd -e service_prd nginx.cue --out yaml | kubectl apply -f -
+          run: cue export -e deployment_prd -e service_prd nginx.cue --out yaml | kubectl apply -f -
         - name: List services
           run: kubectl get services -A
         - name: List Deployments
