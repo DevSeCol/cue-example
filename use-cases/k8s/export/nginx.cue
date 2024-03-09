@@ -40,7 +40,7 @@ for env in _environments {
         port:       80
         targetPort: 80
       }]
-      type: "Cluster"
+      type: "ClusterIP"
     }
   }
 }
