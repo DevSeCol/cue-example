@@ -12,7 +12,8 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
-          run: cue export -e deployment_dev -e service_dev  use-cases/k8s/export/nginx.cue --out yaml
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_dev -e service_dev nginx.cue --out yaml
     cue_export_tst:
       runs-on: ubuntu-latest
       defaults:
@@ -26,7 +27,8 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
-          run: cue export -e deployment_tst -e service_tst  use-cases/k8s/export/nginx.cue --out yaml
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_tst -e service_tst nginx.cue --out yaml
     cue_export_prd:
       runs-on: ubuntu-latest
       defaults:
@@ -40,7 +42,8 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Generate K8S YAML from CUE
-          run: cue export -e deployment_prd -e service_prd  use-cases/k8s/export/nginx.cue --out yaml
+          working-directory: use-cases/k8s/export/
+          run: cue export -e deployment_prd -e service_prd nginx.cue --out yaml
            
     cue_eval_ok:
       runs-on: ubuntu-latest
