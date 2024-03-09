@@ -137,11 +137,14 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Apply dev
+          working-directory: use-cases/k8s/export/
           run: cue export -e deployment_dev -e service_dev nginx.cue --out yaml | kubectl apply -f -
         - name: Apply tst
+          working-directory: use-cases/k8s/export/
           run: cue export -e deployment_tst -e service_tst nginx.cue --out yaml | kubectl apply -f -
         - name: Apply prd
-          run: cue export -e deployment_prd -e service_prd nginx.cue --out yaml | kubectl apply -f -
+          working-directory: use-cases/k8s/export/
+         run: cue export -e deployment_prd -e service_prd nginx.cue --out yaml | kubectl apply -f -
         - name: List services
           run: kubectl get services -A
         - name: List Deployments
