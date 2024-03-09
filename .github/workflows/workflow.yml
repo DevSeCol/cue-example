@@ -122,6 +122,18 @@ jobs:
         - name: Generate K8S YAML from CUE
           working-directory: use-cases/k8s/vet/
           run: cue vet nginx-fail-typo.yaml schema.cue -d "#Schema"
+
+    create-cluster:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Create k8s Kind Cluster
+          uses: helm/kind-action@v1
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: kubectl cluster-info
+          run: |
+            kubectl cluster-info
+            kubectl get nodes
 "on":
   - push
 name: Main Workflow
